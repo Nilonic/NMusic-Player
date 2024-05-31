@@ -1,0 +1,107 @@
+/*style.css*/
+/* Style for the player */
+#music-player {
+    width: 320px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+}
+
+#file-selector {
+    margin-bottom: 15px;
+}
+
+#loop {
+    margin-bottom: 15px;
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#loop:hover {
+    background-color: #0056b3;
+}
+
+#current-track {
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+#progress-container {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#progress {
+    width: 100%;
+    appearance: none;
+    height: 5px;
+    background: #007bff;
+    outline: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+#progress::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+#progress::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+#controls {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    background-color: #f8f8f8;
+    padding: 15px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#play-pause {
+    padding: 10px 20px;
+    border: none;
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#play-pause:hover {
+    background-color: #218838;
+}
+
+#volume {
+    width: 150px;
+}

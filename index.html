@@ -1,0 +1,27 @@
+<!--index.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Player</title>
+    <script src="script.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="music-player">
+        <input type="file" id="file-selector" multiple>
+        <button id="loop">Loop</button>
+        <div id="current-track">No track selected</div>
+        <div id="progress-container">
+            <input type="range" id="progress" value="0" max="100">
+        </div>
+    </div>
+    <div id="controls">
+        <button id="play-pause">Pause</button>
+        <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+    </div>
+
+    <audio id="audio" controls hidden></audio>
+</body>
+</html>

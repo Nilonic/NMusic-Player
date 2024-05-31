@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const playPauseButton = document.getElementById('play-pause');
     const loopButton = document.getElementById('loop');
     const volumeControl = document.getElementById('volume');
+    const playlistTableBody = document.querySelector('#playlist-table tbody');
     let currentTrackIndex = 0;
     let tracks = [];
     let updateInterval;
@@ -15,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const files = event.target.files;
         tracks = Array.from(files);
         currentTrackIndex = 0; // Reset track index
+        populatePlaylist(); // Populate playlist first
         loadTrack(currentTrackIndex);
     });
 
@@ -28,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         audio.play();
         playPauseButton.textContent = 'Pause'; // Update play/pause button text
         updateTrackName(track.name);
+        updatePlaylistHighlight(index);
         audio.onloadedmetadata = () => {
             progress.max = audio.duration;
             updateInterval = setInterval(() => {
@@ -41,6 +44,35 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateTrackName(filename) {
         const name = filename.replace(/\.[^/.]+$/, "");
         currentTrackElement.textContent = name;
+    }
+
+    // Function to populate the playlist table
+    function populatePlaylist() {
+        playlistTableBody.innerHTML = ''; // Clear existing playlist
+        tracks.forEach((track, index) => {
+            const row = document.createElement('tr');
+            row.classList.add('playlist-track');
+            row.dataset.index = index;
+            const cell = document.createElement('td');
+            cell.textContent = track.name.replace(/\.[^/.]+$/, "");
+            row.appendChild(cell);
+            row.addEventListener('click', () => {
+                currentTrackIndex = index;
+                loadTrack(currentTrackIndex);
+            });
+            playlistTableBody.appendChild(row);
+        });
+    }
+
+    // Function to highlight the current track in the playlist
+    function updatePlaylistHighlight(index) {
+        document.querySelectorAll('.playlist-track').forEach((row) => {
+            row.classList.remove('current-track');
+        });
+        const currentTrackRow = document.querySelector(`.playlist-track[data-index="${index}"]`);
+        if (currentTrackRow) {
+            currentTrackRow.classList.add('current-track');
+        }
     }
 
     // Function to toggle loop

@@ -1,4 +1,7 @@
+let doRpc = true;
+
 document.addEventListener('DOMContentLoaded', () => {
+    window.ipc.requestConfig() // request configuration, handler outside of AEL will deal with it
     const audio = document.getElementById('audio');
     const fileSelector = document.getElementById('file-selector');
     const currentTrackElement = document.getElementById('current-track');
@@ -122,6 +125,107 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to update RPC
 function updateRPC(songName, isPaused, timeRemaining) {
-    const status = isPaused ? 'paused' : 'playing';
-    window.rpc.updatePresence(songName, status, isPaused, timeRemaining);
+    if(doRpc){
+        const status = isPaused ? 'paused' : 'playing';
+        window.rpc.updatePresence(songName, status, isPaused, timeRemaining);
+    }
 }
+
+// Create a listener
+window.rpc.createListener('presence-updated', (message) => {
+    console.log('Presence updated:', message);
+});
+
+window.rpc.createListener('config-return', (message) => {
+    console.log('Got Config!');
+    const config = message;
+    if (message["isDarkmode"] == 1){
+        document.body.setAttribute("class", "dark")
+    }
+    if (message["isRpcEnabled"] == 0){
+        doRpc = false
+    }
+    if (message["windowTitle"] != undefined && message["windowTitle"].trim() != ""){
+        document.title = message["windowTitle"]
+    }
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    let shadowdoRPC = doRpc;
+    //alert(shadowdoRPC)
+    const configButton = document.getElementById("config-menu");
+
+    configButton.addEventListener("click", () => {
+        // Check if modal already exists
+        let modal = document.getElementById("config-modal");
+        if (!modal) {
+            // Create modal
+            modal = document.createElement("div");
+            modal.id = "config-modal";
+            modal.className = "modal";
+
+            // Create modal content
+            const modalContent = document.createElement("div");
+            modalContent.className = "modal-content";
+            
+            // Create dark mode toggle
+            const darkModeToggle = document.createElement("button");
+            darkModeToggle.id = "dark-mode-toggle";
+            darkModeToggle.textContent = "Toggle Dark Mode";
+            darkModeToggle.addEventListener("click", () => {
+                if(document.body.classList.toggle("dark")){ //Returns true if token is now present, and false otherwise.
+                    window.ipc.updateConfig("IS_DARK", 1)
+                }
+                else{
+                    window.ipc.updateConfig("IS_DARK", 0)
+                }
+            });
+
+            // Create change window title input and button
+            const titleInput = document.createElement("input");
+            titleInput.id = "title-input";
+            titleInput.type = "text";
+            titleInput.placeholder = "Enter new window title";
+
+            const titleButton = document.createElement("button");
+            titleButton.id = "title-button";
+            titleButton.textContent = "Change Title";
+            titleButton.addEventListener("click", () => {
+                const newTitle = titleInput.value;
+                if (newTitle) {
+                    document.title = newTitle;
+                    window.ipc.updateConfig("WINDOW_TITLE", newTitle);
+                }
+                else{
+                    document.title = "NMusic Player"
+                    window.ipc.updateConfig("WINDOW_TITLE", "NMusic Player");
+                }
+            });
+
+            // Append elements to modal content
+            modalContent.appendChild(darkModeToggle);
+            modalContent.appendChild(document.createElement("br")); // Line break for better layout
+//            modalContent.appendChild(rpcToggle);
+//            modalContent.appendChild(document.createElement("br")); // Line break for better layout
+            modalContent.appendChild(titleInput);
+            modalContent.appendChild(titleButton);
+
+            // Append modal content to modal
+            modal.appendChild(modalContent);
+
+            // Append modal to body
+            document.body.appendChild(modal);
+        }
+
+        // Show modal
+        modal.classList.add("active");
+
+        // Hide modal on click outside of content
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                modal.classList.remove("active");
+            }
+        });
+    });
+});

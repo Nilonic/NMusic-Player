@@ -24,5 +24,19 @@ function updatePresence(song_name, artist, paused, time_remaining) {
 contextBridge.exposeInMainWorld("rpc", {
     updatePresence: (details, artist, paused, time_remaining) => {
         updatePresence(details, artist, paused, time_remaining)
+    },
+    createListener: (listener_name, callback) => {
+        ipcRenderer.on(listener_name, (event, ...args) => callback(...args));
+    }
+})
+contextBridge.exposeInMainWorld("ipc", {
+    requestConfig: () => {
+        ipcRenderer.send("get-config")
+    },
+    updateConfig: (key, value) => {
+        const newConfig = {
+            [key]: value
+        }
+        ipcRenderer.send("update-config", newConfig)
     }
 })

@@ -4,6 +4,8 @@
 
 NMusic Player is a lightweight and very minimalistic music player developed using Electron, designed with simplicity and functionality in mind. One of the standout features of NMusic Player is its Discord Rich Presence (RPC) integration, allowing users to display their currently playing music on their Discord profile. This project focuses on basic playback capabilities for .mp3 files and is primarily a side project complementing a larger development endeavor.
 
+also: made to be hackable (soon&#8482;)
+
 ## Features
 
 ### Current Features
@@ -11,13 +13,16 @@ NMusic Player is a lightweight and very minimalistic music player developed usin
 1. **Discord RPC Integration**
    - NMusic Player supports Discord Rich Presence, enabling you to share your current music track with friends and server members on Discord.
 
-2. **MP3 Playback**
-   - The application supports the playback of .mp3 files, providing a straightforward way to listen to your music library. right now it only supports playing a single file, and no playlist, but we're working on that... slowly
+2. **MP3/FLAC Playback**
+   - The application supports the playback of .mp3 and .flac files, providing a straightforward way to listen to your music library. playlists work, but you'll have to select each file individually
+
+3. **Default dark mode**
+   - Yup, we default to dark mode. it can be changed in the config menu (or the .env file)
 
 ### Planned Features
 
-- **Playlists**
-   - yup. playlists. they won't be good, but they'll work
+- **Plugins**
+   - i don't have anything to say here. just know we'll be adding plugin support
 
 ## Installation
 

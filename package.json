@@ -4,14 +4,19 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron . --trace-warnings"
   },
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nilonic/NMusic-Player.git"
+  },
+  "author": "Nilonic",
   "license": "ISC",
   "devDependencies": {
     "electron": "^30.0.9"
   },
   "dependencies": {
-    "discord-rpc": "^4.0.1"
+    "discord-rpc": "^4.0.1",
+    "dotenv": "^16.4.5"
   }
 }

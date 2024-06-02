@@ -51,10 +51,10 @@ To use NMusic Player, follow these steps:
    - Run the application using `npm start`. This will open the NMusic Player window.
 
 2. **Playing Music**
-   - Add your .mp3 files to the player by dragging and dropping them into the application window or using the file selection dialog. yet again, right now it only supports playing a single file, and no playlist, but we're working on that... slowly
-
+   - Add your .mp3 files to the player by dragging and dropping them over the "choose files" button, or using the file selection dialog.
 3. **Discord RPC**
    - Once music is playing, your current track information will be automatically displayed on your Discord profile, enhancing your listening experience and sharing it with friends. [examples](examples/rpc/)
+   - RPC can be disabled in the .env file, by setting "RPC_ENABLED" to 0
 
 ## Contributing
 

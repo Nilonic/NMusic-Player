@@ -9,9 +9,11 @@
 </head>
 <body>
     <button class="topMenuButton" id="config-menu">open config menu</button>
-    <!--button class="topMenuButton" id="devtools">open dev tools</button-->
+    <button class="topMenuButton" onclick="window.location.href = window.location.href">refresh page</button>
+    <button class="topMenuButton" id="devtools">open dev tools</button>
     <div id="music-player">
-        <input type="file" accept=".mp3,.flac,.m4a" id="file-selector" multiple>
+        <button id="file-selector-btn">Select Audio Files</button>
+        <input type="file" accept=".mp3,.flac,.m4a" id="file-selector" multiple style="display: none;"> <!--legacy stuff, i would remove it but i cba to rewrite 200-odd lines-->
         <button id="loop">Loop</button>
         <div id="current-track">No track selected</div>
         <div id="progress-container">

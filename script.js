@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.ipc.requestConfig() // request configuration, handler outside of AEL will deal with it
     const audio = document.getElementById('audio');
     const fileSelector = document.getElementById('file-selector');
+    const fileSelectorBtn = document.getElementById('file-selector-btn'); // New button
     const currentTrackElement = document.getElementById('current-track');
     const progress = document.getElementById('progress');
     const playPauseButton = document.getElementById('play-pause');
@@ -15,6 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let updateInterval;
 
     // Function to load audio files
+    fileSelectorBtn.addEventListener('click', () => {
+        fileSelector.click();
+    });
+
     fileSelector.addEventListener('change', (event) => {
         const files = event.target.files;
         tracks = Array.from(files);

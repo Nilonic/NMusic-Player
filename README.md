@@ -44,7 +44,12 @@ To use NMusic Player, follow these steps:
    ```bash
    npm start
    ```
-
+<!--
+can't really hide much in a public repo, can we?
+in all seriousness tho. i'll figure out how to make extensions work, no matter how much it hurts
+i mean, how hard could it be? (famous last words)
+ - Nilon
+-->
 ## Usage
 
 1. **Launching the Player**

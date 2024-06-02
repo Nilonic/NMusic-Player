@@ -1,7 +1,10 @@
 /*style.css*/
 
+/* pre-warning: this css file contains some jokes, don't worry, i'm not colorblind (yet) */
+/* comments are leftovers from templates i borrowed (stole) from w3schools */
+
 button.topMenuButton{
-    background-color: #007bff; /* Green */
+    background-color: #007bff; /* Definately Green */
     border: none;
     color: white;
     padding: 5px 12px;
@@ -13,7 +16,7 @@ button.topMenuButton{
     transition: background-color 0.3s;
 }
 button.topMenuButton:hover{
-    background-color: #0056b3; /* Green */
+    background-color: #0056b3; /* Definately Green */
 }
 
 .modal {
@@ -77,6 +80,19 @@ body.dark #music-player {
 
 #file-selector {
     margin-bottom: 15px;
+}
+button#file-selector-btn{
+    margin-bottom: 15px;
+    background-color: #007bff; /* Definately Green */
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
 }
 
 #loop {

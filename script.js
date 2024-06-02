@@ -29,18 +29,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const track = tracks[index];
         if (!track) return;
         const url = URL.createObjectURL(track);
+        
         audio.src = url;
-        audio.play();
-        playPauseButton.textContent = 'Pause'; // Update play/pause button text
-        updateTrackName(track.name);
-        updatePlaylistHighlight(index);
-        audio.onloadedmetadata = () => {
-            progress.max = audio.duration;
-            updateInterval = setInterval(() => {
-                progress.value = audio.currentTime;
-                updateRPC(track.name, audio.paused, (audio.duration - audio.currentTime));
-            }, 1000); // Update every second
-        };
+        audio.load(); // Ensure the audio element loads the new source
+        audio.play().then(() => {
+            playPauseButton.textContent = 'Pause'; // Update play/pause button text
+            updateTrackName(track.name);
+            updatePlaylistHighlight(index);
+            audio.onloadedmetadata = () => {
+                progress.max = audio.duration;
+                updateInterval = setInterval(() => {
+                    progress.value = audio.currentTime;
+                    updateRPC(track.name, audio.paused, (audio.duration - audio.currentTime));
+                }, 1000); // Update every second
+            };
+        }).catch(error => {
+            console.error('Error playing the audio:', error);
+        });
     }
 
     // Function to update the current track name
@@ -87,8 +92,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to toggle play/pause
     function togglePlayPause() {
         if (audio.paused) {
-            audio.play();
-            playPauseButton.textContent = 'Pause'; // Update play/pause button text
+            audio.play().then(() => {
+                playPauseButton.textContent = 'Pause'; // Update play/pause button text
+            }).catch(error => {
+                console.error('Error playing the audio:', error);
+            });
         } else {
             audio.pause();
             playPauseButton.textContent = 'Play'; // Update play/pause button text
@@ -138,7 +146,6 @@ window.rpc.createListener('presence-updated', (message) => {
 
 window.rpc.createListener('config-return', (message) => {
     console.log('Got Config!');
-    const config = message;
     if (message["isDarkmode"] == 1){
         document.body.setAttribute("class", "dark")
     }
@@ -152,9 +159,10 @@ window.rpc.createListener('config-return', (message) => {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    let shadowdoRPC = doRpc;
     //alert(shadowdoRPC)
     const configButton = document.getElementById("config-menu");
+
+    const devtoolButton = document.getElementById("devtools")
 
     configButton.addEventListener("click", () => {
         // Check if modal already exists
@@ -228,4 +236,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
+
+    devtoolButton.addEventListener("click", () => {
+        window.ipc.openDevtools();
+    })
 });

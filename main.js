@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const DiscordRPC = require('discord-rpc');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -26,6 +26,9 @@ function createWindow() {
     });
 
     mainWindow.loadFile('index.html');
+
+      // Hide the menu bar
+    Menu.setApplicationMenu(null);
 
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -94,6 +97,10 @@ function setupIpcMain() {
         // Send the changed config back to the renderer process
         mainWindow.webContents.send('config-updated', changedConfig);
     });
+
+    ipcMain.on("open-dev", () => {
+        mainWindow.webContents.openDevTools();
+    })
 }
 
 function initializeRpc() {

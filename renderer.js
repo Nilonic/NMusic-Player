@@ -38,5 +38,8 @@ contextBridge.exposeInMainWorld("ipc", {
             [key]: value
         }
         ipcRenderer.send("update-config", newConfig)
+    },
+    openDevtools: () => {
+        ipcRenderer.send("open-dev");
     }
 })

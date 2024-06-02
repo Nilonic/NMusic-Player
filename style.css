@@ -1,5 +1,20 @@
 /*style.css*/
 
+button.topMenuButton{
+    background-color: #007bff; /* Green */
+    border: none;
+    color: white;
+    padding: 5px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+button.topMenuButton:hover{
+    background-color: #0056b3; /* Green */
+}
 
 .modal {
     position: fixed;
@@ -45,10 +60,11 @@
     font-family: Arial, sans-serif;
 }
 
-body{
+body {
     background-color: #eee;
+    transition: background-color 0.5s ease; /* Added transition */
 }
-body.dark{
+body.dark {
     background-color: #222;
 }
 

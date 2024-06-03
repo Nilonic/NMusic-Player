@@ -47,6 +47,11 @@ button.topMenuButton:hover{
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+body.dark .modal-content, body.dark .modal-content button, body.dark .modal-content input {
+    background-color: #333;
+    color: #fff;
+}
+
 
 /* Base style for the player */
 #music-player {

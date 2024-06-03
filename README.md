@@ -47,7 +47,7 @@ To use NMusic Player, follow these steps:
 <!--
 can't really hide much in a public repo, can we?
 in all seriousness tho. i'll figure out how to make extensions work, no matter how much it hurts
-i mean, how hard could it be? (famous last words)
+i mean, how hard could it be? (last words)
  - Nilon
 -->
 ## Usage

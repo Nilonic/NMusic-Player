@@ -10,6 +10,8 @@ so if the RPC name changes, don't worry, it'll probably go back soon
 also, if you are cloning this, how's it going? i'll make a community server for this if y'all want to
 -->
 
+[![Dependabot Updates](https://github.com/Nilonic/NMusic-Player/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/Nilonic/NMusic-Player/actions/workflows/dependabot/dependabot-updates)[![CodeQL](https://github.com/Nilonic/NMusic-Player/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)](https://github.com/Nilonic/NMusic-Player/actions/workflows/github-code-scanning/codeql)
+
 ## Overview
 
 NMusic Player is a lightweight and very minimalistic music player developed using Electron, designed with simplicity and functionality in mind. One of the standout features of NMusic Player is its Discord Rich Presence (RPC) integration, allowing users to display their currently playing music on their Discord profile. This project focuses on basic playback capabilities for .mp3 files and is primarily a side project complementing a larger development endeavor.

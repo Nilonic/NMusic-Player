@@ -1,0 +1,5 @@
+this program works with the following filetypes:
+.mp3 (confirmed)
+.flac (confirmed)
+.m4a (unconfirmed, but most likely works)
+.wav (confirmed)

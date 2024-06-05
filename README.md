@@ -1,5 +1,15 @@
 # NMusic Player - README
 
+<!--
+if you can see this, hey!
+you're probably looking at the source code (or raw file)
+that's cool, i'm just gonna say this:
+i'm most likely gonna change the discord client id randomly
+so if the RPC name changes, don't worry, it'll probably go back soon
+
+also, if you are cloning this, how's it going? i'll make a community server for this if y'all want to
+-->
+
 ## Overview
 
 NMusic Player is a lightweight and very minimalistic music player developed using Electron, designed with simplicity and functionality in mind. One of the standout features of NMusic Player is its Discord Rich Presence (RPC) integration, allowing users to display their currently playing music on their Discord profile. This project focuses on basic playback capabilities for .mp3 files and is primarily a side project complementing a larger development endeavor.

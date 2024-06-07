@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu, shell } = require('electron');
 const DiscordRPC = require('discord-rpc');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -49,6 +49,11 @@ function setupIpcMain() {
             });
         }
     });
+
+    ipcMain.on('open-git', () => {
+        shell.openExternal('https://github.com/Nilonic/NMusic-Player');
+    }
+    )
 
     ipcMain.on('get-config', (event) => {
         // building the config
@@ -102,6 +107,10 @@ function setupIpcMain() {
 
     ipcMain.on("open-dev", () => {
         mainWindow.webContents.openDevTools();
+    })
+
+    ipcMain.on("log", (event, data) => {
+        console.log(...data);
     })
 }
 

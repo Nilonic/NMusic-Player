@@ -1,5 +1,5 @@
-let doRpc = true;
-
+let doRpc;
+// \/\/.*$ < regex to find all comments
 document.addEventListener('DOMContentLoaded', () => {
     window.ipc.requestConfig() // request configuration, handler outside of AEL will deal with it
     const audio = document.getElementById('audio');
@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loopButton = document.getElementById('loop');
     const volumeControl = document.getElementById('volume');
     const playlistTableBody = document.querySelector('#playlist-table tbody');
+    const git = document.getElementById("git")
     let currentTrackIndex = 0;
     let tracks = [];
     let updateInterval;
@@ -29,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
             loadTrack(currentTrackIndex);
         }
         else{
-            // do jack shit
+            // do nothing
+            console.log("no files chosen")
         }
     });
 
@@ -149,7 +151,10 @@ function updateRPC(songName, isPaused, timeRemaining) {
     }
 }
 
-// Create a listener
+/**
+ * @deprecated
+ * this functionality was removed from the main.js file a while ago
+ */
 window.rpc.createListener('presence-updated', (message) => {
     console.log('Presence updated:', message);
 });
@@ -162,14 +167,20 @@ window.rpc.createListener('config-return', (message) => {
     if (message["isRpcEnabled"] == 0){
         doRpc = false
     }
+    else{
+        doRpc = true;
+    }
     if (message["windowTitle"] != undefined && message["windowTitle"].trim() != ""){
         document.title = message["windowTitle"]
     }
+
+    git.addEventListener("click", () => {
+        window.ipc.openGit();
+    })
 });
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    //alert(shadowdoRPC)
     const configButton = document.getElementById("config-menu");
 
     const devtoolButton = document.getElementById("devtools")
@@ -210,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
             titleButton.id = "title-button";
             titleButton.textContent = "Change Title";
             titleButton.addEventListener("click", () => {
-                const newTitle = titleInput.value;
+                const newTitle = titleInput.value.trim();
                 if (newTitle) {
                     document.title = newTitle;
                     window.ipc.updateConfig("WINDOW_TITLE", newTitle);

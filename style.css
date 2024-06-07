@@ -3,6 +3,11 @@
 /* pre-warning: this css file contains some jokes, don't worry, i'm not colorblind (yet) */
 /* comments are leftovers from templates i borrowed (stole) from w3schools */
 
+button { /*base for all buttons.*/
+    cursor: pointer;
+}
+
+
 button.topMenuButton{
     background-color: #007bff; /* Definately Green */
     border: none;
@@ -86,7 +91,7 @@ body.dark #music-player {
 }
 
 #file-selector {
-    margin-bottom: 15px;
+    visibility: hidden;
 }
 button#file-selector-btn{
     margin-bottom: 15px;

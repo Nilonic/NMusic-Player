@@ -11,9 +11,10 @@
     <button class="topMenuButton" id="config-menu">open config menu</button>
     <button class="topMenuButton" onclick="window.location.href = window.location.href">refresh page</button>
     <button class="topMenuButton" id="devtools">open dev tools</button>
+    <button class="topMenuButton" id="git">open github repo</button>
     <div id="music-player">
         <button id="file-selector-btn">Select Audio Files</button>
-        <input type="file" accept=".mp3,.flac,.m4a,.wav" id="file-selector" multiple style="display: none;"> <!--legacy stuff, i would remove it but i cba to rewrite 200-odd lines-->
+        <input type="file" accept=".mp3,.flac,.m4a,.wav" id="file-selector" multiple> <!--legacy stuff, i would remove it but i cba to rewrite 200-odd lines-->
         <button id="loop">Loop</button>
         <div id="current-track">No track selected</div>
         <div id="progress-container">
@@ -21,6 +22,11 @@
         </div>
     </div>
     <div id="controls">
+        <!--
+        
+        a
+        
+        -->
         <button id="play-pause">Pause</button>
         <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
     </div>

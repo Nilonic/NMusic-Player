@@ -25,6 +25,8 @@ function createWindow() {
         }
     });
 
+    mainWindow.title = "NMusic Player";
+
     mainWindow.loadFile('index.html');
 
       // Hide the menu bar

@@ -23,9 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fileSelector.addEventListener('change', (event) => {
         const files = event.target.files;
         tracks = Array.from(files);
-        currentTrackIndex = 0; // Reset track index
-        populatePlaylist(); // Populate playlist first
-        loadTrack(currentTrackIndex);
+        if( files['length'] > 0){
+            currentTrackIndex = 0; // Reset track index
+            populatePlaylist(); // Populate playlist first
+            loadTrack(currentTrackIndex);
+        }
+        else{
+            // do jack shit
+        }
     });
 
     // Function to load and play the track

@@ -32,7 +32,8 @@ button.topMenuButton:hover{
     z-index: 1000;
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s, opacity 0.5s;
+    transition: visibility 0.5s, opacity 0.5s;
+    transition: background-color 0.5s cubic-bezier(0.55, 0.06, 0.68, 0.19); /* Added transition */
 }
 
 .modal.active {
@@ -50,6 +51,7 @@ button.topMenuButton:hover{
 body.dark .modal-content, body.dark .modal-content button, body.dark .modal-content input {
     background-color: #333;
     color: #fff;
+    transition: background-color 0.5s cubic-bezier(0.55, 0.06, 0.68, 0.19); /* Added transition */
 }
 
 
@@ -70,7 +72,7 @@ body.dark .modal-content, body.dark .modal-content button, body.dark .modal-cont
 
 body {
     background-color: #eee;
-    transition: background-color 0.5s ease; /* Added transition */
+    transition: background-color 0.5s cubic-bezier(0.55, 0.06, 0.68, 0.19); /* Added transition */
 }
 body.dark {
     background-color: #222;

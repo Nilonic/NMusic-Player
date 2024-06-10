@@ -200,9 +200,12 @@ body.dark #progress::-moz-range-thumb {
 body.dark #controls {
     background-color: #444;
     box-shadow: 0 -2px 5px rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: center; /* Center the buttons horizontally */
+    gap: 10px; /* Add space between the buttons */
 }
 
-#play-pause {
+#play-pause, #skip, #back {
     padding: 10px 20px;
     border: none;
     background-color: #28a745;
@@ -212,17 +215,18 @@ body.dark #controls {
     transition: background-color 0.3s;
 }
 
-body.dark #play-pause {
+body.dark #play-pause, body.dark #skip, body.dark #back {
     background-color: #3cba54;
 }
 
-#play-pause:hover {
+#play-pause:hover, #skip:hover, #back:hover {
     background-color: #218838;
 }
 
-body.dark #play-pause:hover {
+body.dark #play-pause:hover, body.dark #skip:hover, body.dark #back:hover {
     background-color: #34a853;
 }
+
 
 #volume {
     width: 150px;

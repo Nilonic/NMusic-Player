@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const volumeControl = document.getElementById('volume');
     const playlistTableBody = document.querySelector('#playlist-table tbody');
     const git = document.getElementById("git")
+    const skipButon = document.getElementById("skip");
+    const backButton = document.getElementById("back");
     let currentTrackIndex = 0;
     let tracks = [];
     let updateInterval;
@@ -20,6 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
     fileSelectorBtn.addEventListener('click', () => {
         fileSelector.click();
     });
+
+    skipButon.addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+        loadTrack(currentTrackIndex);
+    })
+
+    backButton.addEventListener("click", () => {
+        currentTrackIndex = (currentTrackIndex - 1) % tracks.length;
+        loadTrack(currentTrackIndex);
+    })
 
     fileSelector.addEventListener('change', (event) => {
         const files = event.target.files;

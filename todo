@@ -1,2 +1,5 @@
 1: fix issue where, when no file is chosen, playlist becomes empty [FIXED!]
-2: reformat play/pause and volume bit
+
+2: reformat play/pause and volume bit [DONE!]
+
+3: plugins

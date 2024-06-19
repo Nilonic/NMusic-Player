@@ -1,86 +1,104 @@
-let doRpc;
-// \/\/.*$ < regex to find all comments
 document.addEventListener('DOMContentLoaded', () => {
-    window.ipc.requestConfig() // request configuration, handler outside of AEL will deal with it
-    const audio = document.getElementById('audio');
-    const fileSelector = document.getElementById('file-selector');
-    const fileSelectorBtn = document.getElementById('file-selector-btn'); // New button
-    const currentTrackElement = document.getElementById('current-track');
-    const progress = document.getElementById('progress');
-    const playPauseButton = document.getElementById('play-pause');
-    const loopButton = document.getElementById('loop');
-    const volumeControl = document.getElementById('volume');
-    const playlistTableBody = document.querySelector('#playlist-table tbody');
-    const git = document.getElementById("git")
-    const skipButon = document.getElementById("skip");
-    const backButton = document.getElementById("back");
+    initializeApp();
+});
+
+function initializeApp() {
+    window.ipc.requestConfig();
+
+    const elements = getDOMElements();
     let currentTrackIndex = 0;
     let tracks = [];
     let updateInterval;
+    let doRpc = false;
 
-    // Function to load audio files
-    fileSelectorBtn.addEventListener('click', () => {
-        fileSelector.click();
-    });
+    setEventListeners();
 
-    skipButon.addEventListener("click", () => {
-        currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-        loadTrack(currentTrackIndex);
-    })
+    function getDOMElements() {
+        return {
+            audio: document.getElementById('audio'),
+            fileSelector: document.getElementById('file-selector'),
+            fileSelectorBtn: document.getElementById('file-selector-btn'),
+            currentTrackElement: document.getElementById('current-track'),
+            progress: document.getElementById('progress'),
+            playPauseButton: document.getElementById('play-pause'),
+            loopButton: document.getElementById('loop'),
+            volumeControl: document.getElementById('volume'),
+            playlistTableBody: document.querySelector('#playlist-table tbody'),
+            git: document.getElementById("git"),
+            skipButton: document.getElementById("skip"),
+            backButton: document.getElementById("back")
+        };
+    }
 
-    backButton.addEventListener("click", () => {
-        currentTrackIndex = (currentTrackIndex - 1) % tracks.length;
-        loadTrack(currentTrackIndex);
-    })
+    function setEventListeners() {
+        elements.fileSelectorBtn.addEventListener('click', () => elements.fileSelector.click());
+        elements.skipButton.addEventListener("click", nextTrack);
+        elements.backButton.addEventListener("click", previousTrack);
+        elements.fileSelector.addEventListener('change', handleFileSelection);
+        elements.playPauseButton.addEventListener("click", togglePlayPause);
+        elements.loopButton.addEventListener("click", toggleLoop);
+        elements.audio.addEventListener('ended', nextTrack);
+        elements.progress.addEventListener('input', updateProgress);
+        elements.volumeControl.addEventListener('input', updateVolume);
+        elements.git.addEventListener("click", () => window.ipc.openGit());
 
-    fileSelector.addEventListener('change', (event) => {
+        window.rpc.createListener('presence-updated', handlePresenceUpdate);
+        window.rpc.createListener('config-return', handleConfigReturn);
+
+        const configButton = document.getElementById("config-menu");
+        const devtoolButton = document.getElementById("devtools");
+
+        configButton.addEventListener("click", showConfigModal);
+        devtoolButton.addEventListener("click", () => window.ipc.openDevtools());
+    }
+
+    function handleFileSelection(event) {
         const files = event.target.files;
         tracks = Array.from(files);
-        if( files['length'] > 0){
-            currentTrackIndex = 0; // Reset track index
-            populatePlaylist(); // Populate playlist first
+        if (tracks.length > 0) {
+            currentTrackIndex = 0;
+            populatePlaylist();
             loadTrack(currentTrackIndex);
+        } else {
+            console.log("No files chosen");
         }
-        else{
-            // do nothing
-            console.log("no files chosen")
-        }
-    });
+    }
 
-    // Function to load and play the track
     function loadTrack(index) {
-        clearInterval(updateInterval); // Clear previous interval
+        clearInterval(updateInterval);
+
         const track = tracks[index];
         if (!track) return;
+
         const url = URL.createObjectURL(track);
-        
-        audio.src = url;
-        audio.load(); // Ensure the audio element loads the new source
-        audio.play().then(() => {
-            playPauseButton.textContent = 'Pause'; // Update play/pause button text
+        elements.audio.src = url;
+        elements.audio.load();
+        elements.audio.play().then(() => {
+            elements.playPauseButton.textContent = 'Pause';
             updateTrackName(track.name);
-            updatePlaylistHighlight(index);
-            audio.onloadedmetadata = () => {
-                progress.max = audio.duration;
+            highlightCurrentTrack(index);
+
+            elements.audio.onloadedmetadata = () => {
+                elements.progress.max = elements.audio.duration;
                 updateInterval = setInterval(() => {
-                    progress.value = audio.currentTime;
-                    updateRPC(track.name, audio.paused, (audio.duration - audio.currentTime));
-                }, 1000); // Update every second
+                    elements.progress.value = elements.audio.currentTime;
+                    if (doRpc) {
+                        updateRPC(track.name, elements.audio.paused, elements.audio.duration - elements.audio.currentTime);
+                    }
+                }, 1000);
             };
         }).catch(error => {
             console.error('Error playing the audio:', error);
         });
     }
 
-    // Function to update the current track name
     function updateTrackName(filename) {
         const name = filename.replace(/\.[^/.]+$/, "");
-        currentTrackElement.textContent = name;
+        elements.currentTrackElement.textContent = name;
     }
 
-    // Function to populate the playlist table
     function populatePlaylist() {
-        playlistTableBody.innerHTML = ''; // Clear existing playlist
+        elements.playlistTableBody.innerHTML = '';
         tracks.forEach((track, index) => {
             const row = document.createElement('tr');
             row.classList.add('playlist-track');
@@ -92,185 +110,132 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTrackIndex = index;
                 loadTrack(currentTrackIndex);
             });
-            playlistTableBody.appendChild(row);
+            elements.playlistTableBody.appendChild(row);
         });
     }
 
-    // Function to highlight the current track in the playlist
-    function updatePlaylistHighlight(index) {
-        document.querySelectorAll('.playlist-track').forEach((row) => {
-            row.classList.remove('current-track');
-        });
+    function highlightCurrentTrack(index) {
+        document.querySelectorAll('.playlist-track').forEach(row => row.classList.remove('current-track'));
         const currentTrackRow = document.querySelector(`.playlist-track[data-index="${index}"]`);
         if (currentTrackRow) {
             currentTrackRow.classList.add('current-track');
         }
     }
 
-    // Function to toggle loop
     function toggleLoop() {
-        audio.loop = !audio.loop;
-        loopButton.textContent = audio.loop ? 'Loop: On' : 'Loop: Off'; // Update loop button text
+        elements.audio.loop = !elements.audio.loop;
+        elements.loopButton.textContent = elements.audio.loop ? 'Loop: On' : 'Loop: Off';
     }
 
-    // Function to toggle play/pause
     function togglePlayPause() {
-        if (audio.paused) {
-            audio.play().then(() => {
-                playPauseButton.textContent = 'Pause'; // Update play/pause button text
+        if (elements.audio.paused) {
+            elements.audio.play().then(() => {
+                elements.playPauseButton.textContent = 'Pause';
             }).catch(error => {
                 console.error('Error playing the audio:', error);
             });
         } else {
-            audio.pause();
-            playPauseButton.textContent = 'Play'; // Update play/pause button text
+            elements.audio.pause();
+            elements.playPauseButton.textContent = 'Play';
         }
     }
 
-    document.getElementById("play-pause").addEventListener("click", () => {
-        togglePlayPause();
-    });
+    function updateProgress() {
+        elements.audio.currentTime = elements.progress.value;
+    }
 
-    document.getElementById("loop").addEventListener("click", () => {
-        toggleLoop();
-    });
+    function updateVolume() {
+        elements.audio.volume = elements.volumeControl.value;
+    }
 
-    // Event listener for track end
-    audio.addEventListener('ended', () => {
+    function nextTrack() {
         currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
         loadTrack(currentTrackIndex);
-    });
+    }
 
-    // Update progress bar
-    progress.addEventListener('input', () => {
-        audio.currentTime = progress.value;
-    });
+    function previousTrack() {
+        currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+        loadTrack(currentTrackIndex);
+    }
 
-    // Update volume
-    volumeControl.addEventListener('input', () => {
-        audio.volume = volumeControl.value;
-    });
-
-    // Initial state of loop button
-    loopButton.textContent = audio.loop ? 'Loop: On' : 'Loop: Off'; // Set initial loop button text
-});
-
-// Function to update RPC
-function updateRPC(songName, isPaused, timeRemaining) {
-    if(doRpc){
+    function updateRPC(songName, isPaused, timeRemaining) {
         const status = isPaused ? 'paused' : 'playing';
         window.rpc.updatePresence(songName, status, isPaused, timeRemaining);
     }
-}
 
-/**
- * @deprecated
- * this functionality was removed from the main.js file a while ago
- */
-window.rpc.createListener('presence-updated', (message) => {
-    console.log('Presence updated:', message);
-});
-
-window.rpc.createListener('config-return', (message) => {
-    console.log('Got Config!');
-    if (message["isDarkmode"] == 1){
-        document.body.setAttribute("class", "dark")
-    }
-    if (message["isRpcEnabled"] == 0){
-        doRpc = false
-    }
-    else{
-        doRpc = true;
-    }
-    if (message["windowTitle"] != undefined && message["windowTitle"].trim() != ""){
-        document.title = message["windowTitle"]
+    function handlePresenceUpdate(message) {
+        console.log('Presence updated:', message);
     }
 
-    git.addEventListener("click", () => {
-        window.ipc.openGit();
-    })
-});
+    function handleConfigReturn(message) {
+        console.log('Got Config!');
+        if (message.isDarkmode == 1) {
+            document.body.classList.add("dark");
+        }
+        doRpc = message.isRpcEnabled !== 0;
+        if (message.windowTitle) {
+            document.title = message.windowTitle.trim() || "NMusic Player";
+        }
+    }
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    const configButton = document.getElementById("config-menu");
-
-    const devtoolButton = document.getElementById("devtools")
-
-    configButton.addEventListener("click", () => {
-        // Check if modal already exists
+    function showConfigModal() {
         let modal = document.getElementById("config-modal");
         if (!modal) {
-            // Create modal
-            modal = document.createElement("div");
-            modal.id = "config-modal";
-            modal.className = "modal";
-
-            // Create modal content
-            const modalContent = document.createElement("div");
-            modalContent.className = "modal-content";
-            
-            // Create dark mode toggle
-            const darkModeToggle = document.createElement("button");
-            darkModeToggle.id = "dark-mode-toggle";
-            darkModeToggle.textContent = "Toggle Dark Mode";
-            darkModeToggle.addEventListener("click", () => {
-                if(document.body.classList.toggle("dark")){ //Returns true if token is now present, and false otherwise.
-                    window.ipc.updateConfig("IS_DARK", 1)
-                }
-                else{
-                    window.ipc.updateConfig("IS_DARK", 0)
-                }
-            });
-
-            // Create change window title input and button
-            const titleInput = document.createElement("input");
-            titleInput.id = "title-input";
-            titleInput.type = "text";
-            titleInput.placeholder = "Enter new window title";
-
-            const titleButton = document.createElement("button");
-            titleButton.id = "title-button";
-            titleButton.textContent = "Change Title";
-            titleButton.addEventListener("click", () => {
-                const newTitle = titleInput.value.trim();
-                if (newTitle) {
-                    document.title = newTitle;
-                    window.ipc.updateConfig("WINDOW_TITLE", newTitle);
-                }
-                else{
-                    document.title = "NMusic Player"
-                    window.ipc.updateConfig("WINDOW_TITLE", "NMusic Player");
-                }
-            });
-
-            // Append elements to modal content
-            modalContent.appendChild(darkModeToggle);
-            modalContent.appendChild(document.createElement("br")); // Line break for better layout
-//            modalContent.appendChild(rpcToggle);
-//            modalContent.appendChild(document.createElement("br")); // Line break for better layout
-            modalContent.appendChild(titleInput);
-            modalContent.appendChild(titleButton);
-
-            // Append modal content to modal
-            modal.appendChild(modalContent);
-
-            // Append modal to body
+            modal = createConfigModal();
             document.body.appendChild(modal);
         }
-
-        // Show modal
         modal.classList.add("active");
-
-        // Hide modal on click outside of content
         modal.addEventListener("click", (event) => {
             if (event.target === modal) {
                 modal.classList.remove("active");
             }
         });
-    });
+    }
 
-    devtoolButton.addEventListener("click", () => {
-        window.ipc.openDevtools();
-    })
-});
+    function createConfigModal() {
+        const modal = document.createElement("div");
+        modal.id = "config-modal";
+        modal.className = "modal";
+
+        const modalContent = document.createElement("div");
+        modalContent.className = "modal-content";
+
+        const darkModeToggle = document.createElement("button");
+        darkModeToggle.id = "dark-mode-toggle";
+        darkModeToggle.textContent = "Toggle Dark Mode";
+        darkModeToggle.addEventListener("click", () => {
+            if (document.body.classList.toggle("dark")) {
+                window.ipc.updateConfig("IS_DARK", 1);
+            } else {
+                window.ipc.updateConfig("IS_DARK", 0);
+            }
+        });
+
+        const titleInput = document.createElement("input");
+        titleInput.id = "title-input";
+        titleInput.type = "text";
+        titleInput.placeholder = "Enter new window title";
+
+        const titleButton = document.createElement("button");
+        titleButton.id = "title-button";
+        titleButton.textContent = "Change Title";
+        titleButton.addEventListener("click", () => {
+            const newTitle = titleInput.value.trim();
+            if (newTitle) {
+                document.title = newTitle;
+                window.ipc.updateConfig("WINDOW_TITLE", newTitle);
+            } else {
+                document.title = "NMusic Player";
+                window.ipc.updateConfig("WINDOW_TITLE", "NMusic Player");
+            }
+        });
+
+        modalContent.appendChild(darkModeToggle);
+        modalContent.appendChild(document.createElement("br"));
+        modalContent.appendChild(titleInput);
+        modalContent.appendChild(titleButton);
+        modal.appendChild(modalContent);
+
+        return modal;
+    }
+}

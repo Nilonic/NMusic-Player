@@ -29,7 +29,7 @@ function createWindow() {
 
     mainWindow.loadFile('index.html');
 
-      // Hide the menu bar
+    // Hide the menu bar
     Menu.setApplicationMenu(null);
 
     mainWindow.on('closed', () => {
@@ -39,21 +39,20 @@ function createWindow() {
 
 function setupIpcMain() {
     ipcMain.on('update-presence', (event, presence) => {
-        if(process.env.RPC_ENABLED == 1){
-        rpc.setActivity(presence)
-            .then(() => {
-                //mainWindow.webContents.send('presence-updated', 'success!');
-            })
-            .catch(error => {
-                //mainWindow.webContents.send('presence-updated', `Error! ${error}`);
-            });
+        if (process.env.RPC_ENABLED == 1) {
+            rpc.setActivity(presence)
+                .then(() => {
+                    mainWindow.webContents.send('presence-updated', 'success!');
+                })
+                .catch(error => {
+                    mainWindow.webContents.send('presence-updated', `Error! ${error}`);
+                });
         }
     });
 
     ipcMain.on('open-git', () => {
         shell.openExternal('https://github.com/Nilonic/NMusic-Player');
-    }
-    )
+    });
 
     ipcMain.on('get-config', (event) => {
         // building the config
@@ -64,7 +63,7 @@ function setupIpcMain() {
         }
         // send it to listener (and prey they listen)
         mainWindow.webContents.send('config-return', config)
-    })
+    });
 
     ipcMain.on('update-config', (event, data) => {
         // data is expected to be an object with a single key-value pair
@@ -74,72 +73,69 @@ function setupIpcMain() {
 
         switch (key) {
             case "IS_DARK":
-                process.env.IS_DARK = value
+                process.env.IS_DARK = value;
                 break;
             case "RPC_ENABLED":
-                process.env.RPC_ENABLED = value
+                process.env.RPC_ENABLED = value;
                 dialog.showMessageBox(mainWindow, {
                     type: 'info',
                     message: "toggle won't take effect until next restart, sorry!",
                     title: "RPC has been toggled!"
-                })
+                });
                 break;
             case "WINDOW_TITLE":
-                process.env.WINDOW_TITLE = value
+                process.env.WINDOW_TITLE = value;
                 break;
             default:
                 dialog.showMessageBox(mainWindow, {
                     type: 'warning',
                     message: "key wasn't found in .env file!",
                     title: "Warning"
-                })
+                });
                 break;
         }
-    
+
         // Construct the changedConfig object
         const changedConfig = {
             [key]: value
         };
-    
+
         // Send the changed config back to the renderer process
         mainWindow.webContents.send('config-updated', changedConfig);
     });
 
     ipcMain.on("open-dev", () => {
         mainWindow.webContents.openDevTools();
-    })
+    });
 
     ipcMain.on("log", (event, data) => {
         console.log(...data);
-    })
+    });
 }
 
 function initializeRpc() {
-    rpc.login({ clientId: clientId })
-        .then(() => {
-            rpc.setActivity({
-                details: 'No Song Loaded',
-                state: 'Null and Void',
-                startTimestamp: new Date().getTime()
+    if (process.env.RPC_ENABLED == 1) {
+        rpc.login({ clientId: clientId })
+            .then(() => {
+                rpc.setActivity({
+                    details: 'No Song Loaded',
+                    state: 'Null and Void',
+                    startTimestamp: new Date().getTime()
+                });
+                setupIpcMain(); // Set up IPC listeners after RPC is initialized
+            })
+            .catch(error => {
+                console.error('Error logging into Discord:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error logging into Discord:', error);
-        });
+    } else {
+        setupIpcMain(); // Set up IPC listeners without RPC
+    }
 }
 
 app.on('ready', () => {
-    if(process.env.RPC_ENABLED == 1){
-        console.log("we'll be using RPC")
-    }
-    else{
-        console.log("we won't be using RPC")
-    }
+    console.log(process.env.RPC_ENABLED == 1 ? "we'll be using RPC" : "we won't be using RPC");
     try {
         createWindow();
-        if(process.env.RPC_ENABLED == 1){
-            setupIpcMain();
-        }
         initializeRpc();
     } catch (error) {
         console.error('Error during app startup:', error);
@@ -157,7 +153,6 @@ app.on('activate', () => {
     }
 });
 
-
 const fs = require('fs');
 app.on('before-quit', async () => {
     // Serialize environment variables and save to .env file
@@ -174,5 +169,3 @@ WINDOW_TITLE=${process.env.WINDOW_TITLE || ''}
     // Write environment variables to .env file
     fs.writeFileSync('.env', envString.trim(), 'utf-8');
 });
-
-
